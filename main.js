@@ -277,7 +277,6 @@ function filterAndRender() {
     papersListContainer.style.display = 'none';
     noPapersPlaceholder.style.display = 'flex';
     
-    // Render "Select a Subject" prompt
     noPapersPlaceholder.innerHTML = `
       <div class="empty-icon-container">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -290,6 +289,30 @@ function filterAndRender() {
     
     currentFilterTitle.textContent = "All Past Papers";
     filteredCountIndicator.textContent = "0 documents";
+    return;
+  }
+
+  // If a subject is selected, but no specific filter is active, show the select filter prompt
+  const hasActiveFilter = (activeYear !== 'all' || activeType !== 'all' || activeSession !== 'all' || searchQuery);
+  if (activeSubject !== 'all' && !hasActiveFilter) {
+    papersListContainer.style.display = 'none';
+    noPapersPlaceholder.style.display = 'flex';
+    
+    const subjectName = SUBJECT_MAP[activeSubject] || '';
+    noPapersPlaceholder.innerHTML = `
+      <div class="empty-icon-container">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+      <h3>Select filters to display papers</h3>
+      <p>Choose an Exam Year, Paper Type, or Exam Session from the left sidebar to start browsing past papers for ${activeSubject} ${subjectName}.</p>
+    `;
+    
+    currentFilterTitle.textContent = `${activeSubject} ${subjectName}`;
+    filteredCountIndicator.textContent = "Select a filter";
     return;
   }
 
@@ -324,11 +347,28 @@ function filterAndRender() {
     // Exam Session filter
     const matchesSession = (activeSession === 'all' || paper.session === activeSession);
     
-    // Text search filter (split by spaces and commas, all keywords must match)
+    // Text search filter (split by spaces and commas, all keywords must match, supports aliases)
     let matchesSearch = true;
     if (searchQuery) {
       const searchTerms = searchQuery.split(/[\s,]+/).filter(t => t.length > 0);
-      const matchText = `${paper.displayName} ${paper.subjectName} ${paper.subjectCode} ${paper.year} ${paper.session} ${paper.fileName}`.toLowerCase();
+      
+      let aliases = '';
+      const code = paper.subjectCode;
+      if (code === '4MA1' || code === '4MB1') {
+        aliases = 'math maths mathematics';
+      } else if (code === '4PM1') {
+        aliases = 'math maths mathematics further pure fpm';
+      } else if (code === '4XES2') {
+        aliases = 'esl english as second language';
+      } else if (code === '4EB1') {
+        aliases = 'english lang b language';
+      } else if (code === '4ET1') {
+        aliases = 'english literature lit';
+      } else if (code === '4AC1') {
+        aliases = 'accounting acc';
+      }
+      
+      const matchText = `${paper.displayName} ${paper.subjectName} ${paper.subjectCode} ${paper.year} ${paper.session} ${paper.fileName} ${aliases}`.toLowerCase();
       matchesSearch = searchTerms.every(term => matchText.includes(term));
     }
     
