@@ -220,14 +220,27 @@ const searchResultsDropdown = document.getElementById('search-results-dropdown')
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const themeIcon = document.getElementById('theme-icon');
 
-// Navigation triggers
+// Navigation triggers & Drawer
 const logoHomeLink = document.getElementById('logo-home-link');
-const navDashboardLink = document.getElementById('nav-dashboard-link');
 const sidebarDashboardBtn = document.getElementById('sidebar-dashboard-btn');
 const sidebarResourcesBtn = document.getElementById('sidebar-resources-btn');
 const sidebarPapersBtn = document.getElementById('sidebar-papers-btn');
 const sidebarProfileBtn = document.getElementById('sidebar-profile-btn');
 const courseMenuTitle = document.getElementById('course-menu-title');
+
+const navResourcesBtn = document.getElementById('nav-resources-btn');
+const resourcesDrawerOverlay = document.getElementById('resources-drawer-overlay');
+const resourcesDrawerPanel = document.getElementById('resources-drawer-panel');
+const drawerIgcseBtn = document.getElementById('drawer-igcse-btn');
+const drawerBackBtn = document.getElementById('drawer-back-btn');
+const drawerMyCoursesBtn = document.getElementById('drawer-my-courses-btn');
+const drawerViewMain = document.getElementById('drawer-view-main');
+const drawerViewIgcse = document.getElementById('drawer-view-igcse');
+
+// Sidebar Collapse elements
+const sidebarHideMenuBtn = document.getElementById('sidebar-hide-menu-btn');
+const sidebarToggleHandle = document.getElementById('sidebar-toggle-handle');
+const workspaceFrame = document.querySelector('.workspace-frame');
 
 // View sections
 const dashboardView = document.getElementById('dashboard-view');
@@ -306,7 +319,6 @@ function updateThemeIcon(isDark) {
 function setupEventListeners() {
   // Navigation hooks
   logoHomeLink.addEventListener('click', (e) => { e.preventDefault(); navigateTo('dashboard'); });
-  navDashboardLink.addEventListener('click', (e) => { e.preventDefault(); navigateTo('dashboard'); });
   sidebarDashboardBtn.addEventListener('click', () => navigateTo('dashboard'));
   
   sidebarResourcesBtn.addEventListener('click', () => {
@@ -315,6 +327,56 @@ function setupEventListeners() {
   
   sidebarPapersBtn.addEventListener('click', () => {
     if (currentSubjectCode) navigateTo('papers', currentSubjectCode);
+  });
+
+  // Global Resources slide-out drawer trigger
+  navResourcesBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    drawerViewMain.classList.add('active-view');
+    drawerViewIgcse.classList.remove('active-view');
+    resourcesDrawerOverlay.classList.add('open');
+  });
+
+  resourcesDrawerOverlay.addEventListener('click', (e) => {
+    if (e.target === resourcesDrawerOverlay) {
+      resourcesDrawerOverlay.classList.remove('open');
+    }
+  });
+
+  drawerIgcseBtn.addEventListener('click', () => {
+    drawerViewMain.classList.remove('active-view');
+    drawerViewIgcse.classList.add('active-view');
+  });
+
+  drawerBackBtn.addEventListener('click', () => {
+    drawerViewIgcse.classList.remove('active-view');
+    drawerViewMain.classList.add('active-view');
+  });
+
+  drawerMyCoursesBtn.addEventListener('click', () => {
+    navigateTo('dashboard');
+    resourcesDrawerOverlay.classList.remove('open');
+  });
+
+  // Click on drawer subjects list
+  document.querySelectorAll('#drawer-view-igcse a[data-subject]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const code = a.getAttribute('data-subject');
+      navigateTo('papers', code);
+      resourcesDrawerOverlay.classList.remove('open');
+    });
+  });
+
+  // Sidebar Hide menu toggle operations
+  sidebarHideMenuBtn.addEventListener('click', () => {
+    workspaceFrame.classList.add('sidebar-collapsed');
+    sidebarToggleHandle.style.display = 'flex';
+  });
+
+  sidebarToggleHandle.addEventListener('click', () => {
+    workspaceFrame.classList.remove('sidebar-collapsed');
+    sidebarToggleHandle.style.display = 'none';
   });
 
   // Global search autocomplete dropdown
@@ -549,6 +611,10 @@ function navigateTo(page, subjectCode = '') {
     sidebarPapersBtn.style.display = 'none';
     courseMenuTitle.style.display = 'none';
     
+    // Auto collapse sidebar on dashboard
+    workspaceFrame.classList.add('sidebar-collapsed');
+    sidebarToggleHandle.style.display = 'none';
+
     const username = localStorage.getItem('profile-username');
     dashboardView.querySelector('h2').textContent = username ? `${username}'s courses` : 'My courses';
 
@@ -562,6 +628,10 @@ function navigateTo(page, subjectCode = '') {
     sidebarResourcesBtn.style.display = 'flex';
     sidebarPapersBtn.style.display = 'flex';
     courseMenuTitle.style.display = 'block';
+
+    // Auto expand sidebar on landing
+    workspaceFrame.classList.remove('sidebar-collapsed');
+    sidebarToggleHandle.style.display = 'none';
     
     // Set Sidebar titles
     const subName = SUBJECT_MAP[subjectCode] || subjectCode;
@@ -588,6 +658,10 @@ function navigateTo(page, subjectCode = '') {
     sidebarResourcesBtn.style.display = 'flex';
     sidebarPapersBtn.style.display = 'flex';
     courseMenuTitle.style.display = 'block';
+
+    // Auto expand sidebar on papers
+    workspaceFrame.classList.remove('sidebar-collapsed');
+    sidebarToggleHandle.style.display = 'none';
     
     const subName = SUBJECT_MAP[subjectCode] || subjectCode;
     courseMenuTitle.textContent = `${subjectCode} Course`;

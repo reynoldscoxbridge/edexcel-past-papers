@@ -368,7 +368,7 @@ body {
   left: 0;
   bottom: 0;
   z-index: 90;
-  transition: var(--transition-smooth);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-menu {
@@ -441,6 +441,17 @@ body {
   flex-direction: column;
   gap: 2rem;
   width: calc(100vw - 240px);
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Collapsed Sidebar overrides */
+.workspace-frame.sidebar-collapsed .left-sidebar {
+  transform: translateX(-240px);
+}
+
+.workspace-frame.sidebar-collapsed .main-content {
+  margin-left: 0;
+  width: 100vw;
 }
 
 /* Page Headers & Breadcrumbs */
@@ -1486,4 +1497,171 @@ body {
     padding-top: 1rem;
     margin-top: 0.5rem;
   }
+}
+
+/* Left Slide-out Drawer Overlay */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 8, 29, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Drawer panel container */
+.drawer-panel {
+  width: 280px;
+  height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+  transform: translateX(-100%);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.drawer-overlay.open .drawer-panel {
+  transform: translateX(0);
+}
+
+.drawer-view {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.drawer-view.active-view {
+  display: flex;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.drawer-item:hover {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.drawer-item-expandable svg {
+  color: var(--text-muted);
+}
+
+.drawer-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: var(--transition-smooth);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+  padding-bottom: 0.75rem;
+  width: 100%;
+  text-align: left;
+}
+
+.drawer-back-btn:hover {
+  color: var(--primary-purple);
+}
+
+.drawer-section-title {
+  font-size: 1.25rem;
+  font-weight: 850;
+  color: var(--text-primary);
+  padding: 0 1rem 0.5rem 1rem;
+  letter-spacing: -0.5px;
+}
+
+.drawer-subsection-title {
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.75rem 1rem 0.25rem 1rem;
+  letter-spacing: 0.5px;
+}
+
+.drawer-subject-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.drawer-subject-list a {
+  display: block;
+  padding: 0.55rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-smooth);
+}
+
+.drawer-subject-list a:hover {
+  background-color: var(--primary-purple-light);
+  color: var(--primary-purple);
+}
+
+/* Sidebar toggle handle button fixed to left margin */
+.sidebar-toggle-handle {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  z-index: 95;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  width: 24px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  transition: var(--transition-smooth);
+}
+
+.sidebar-toggle-handle:hover {
+  width: 28px;
+  background: var(--primary-purple-hover);
 }

@@ -21,6 +21,74 @@
     <div class="blob blob-blue"></div>
   </div>
 
+  <!-- Left Slide-out Drawer Overlay -->
+  <div class="drawer-overlay" id="resources-drawer-overlay">
+    <div class="drawer-panel" id="resources-drawer-panel">
+      
+      <!-- Panel 1: Main Menu -->
+      <div class="drawer-view active-view" id="drawer-view-main">
+        <button class="drawer-item" id="drawer-my-courses-btn">
+          My courses
+        </button>
+        <button class="drawer-item drawer-item-expandable" id="drawer-igcse-btn">
+          <span>IGCSE</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+        <button class="drawer-item">GCSE</button>
+        <button class="drawer-item">AS</button>
+        <button class="drawer-item">A Level</button>
+        <button class="drawer-item">IB</button>
+        <button class="drawer-item">O Level</button>
+        <button class="drawer-item">AP</button>
+        <button class="drawer-item">SQA</button>
+        <button class="drawer-item">Other</button>
+        <button class="drawer-item">IELTS</button>
+      </div>
+
+      <!-- Panel 2: IGCSE Subjects list -->
+      <div class="drawer-view" id="drawer-view-igcse">
+        <button class="drawer-back-btn" id="drawer-back-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          IGCSE
+        </button>
+        <h3 class="drawer-section-title">All subjects</h3>
+        
+        <h4 class="drawer-subsection-title">Most popular</h4>
+        <div class="drawer-subject-list">
+          <a href="#" data-subject="4CH1">Chemistry</a>
+          <a href="#" data-subject="4PH1">Physics</a>
+          <a href="#" data-subject="4MA1">Maths</a>
+        </div>
+
+        <h4 class="drawer-subsection-title">A-Z</h4>
+        <div class="drawer-subject-list">
+          <a href="#" data-subject="4AC1">Accounting</a>
+          <a href="#" data-subject="4CH1">Chemistry</a>
+          <a href="#" data-subject="4EC1">Economics</a>
+          <a href="#" data-subject="4EB1">English Language B</a>
+          <a href="#" data-subject="4ET1">English Literature</a>
+          <a href="#" data-subject="4XES2">ESL</a>
+          <a href="#" data-subject="4PM1">Further Pure Mathematics</a>
+          <a href="#" data-subject="4MA1">Mathematics A</a>
+          <a href="#" data-subject="4MB1">Mathematics B</a>
+          <a href="#" data-subject="4PH1">Physics</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar Toggle Handle (hidden by default) -->
+  <button class="sidebar-toggle-handle" id="sidebar-toggle-handle" style="display: none;" title="Show menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
+
   <!-- Top Navigation Bar -->
   <nav class="top-nav">
     <div class="nav-left">
@@ -30,37 +98,12 @@
         </div>
       </a>
       <div class="nav-links">
-        <a href="#" class="nav-link" id="nav-dashboard-link">Dashboard</a>
-        <div class="nav-dropdown-wrapper">
-          <button class="nav-dropdown-trigger" id="nav-resources-btn">
-            Resources
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:0.2rem;">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-          <div class="nav-dropdown-content" id="nav-resources-dropdown">
-            <div class="dropdown-submenu-trigger">
-              <span>IGCSE Subjects</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-              <div class="dropdown-submenu-content">
-                <a href="#" data-subject="4AC1">Accounting (4AC1)</a>
-                <a href="#" data-subject="4CH1">Chemistry (4CH1)</a>
-                <a href="#" data-subject="4EC1">Economics (4EC1)</a>
-                <a href="#" data-subject="4EB1">English Language B (4EB1)</a>
-                <a href="#" data-subject="4XES2">ESL (4XES2)</a>
-                <a href="#" data-subject="4ET1">English Literature (4ET1)</a>
-                <a href="#" data-subject="4PM1">Further Pure Math (4PM1)</a>
-                <a href="#" data-subject="4MA1">Mathematics A (4MA1)</a>
-                <a href="#" data-subject="4MB1">Mathematics B (4MB1)</a>
-                <a href="#" data-subject="4PH1">Physics (4PH1)</a>
-              </div>
-            </div>
-            <a href="#" id="dropdown-notes-link">Learning Hub</a>
-            <a href="#" id="dropdown-about-link">About Us</a>
-          </div>
-        </div>
+        <button class="nav-dropdown-trigger" id="nav-resources-btn" style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-left: 1.5rem;">
+          Resources
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:0.25rem;">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
       </div>
     </div>
     
@@ -91,6 +134,15 @@
     <!-- Left Sidebar Menu -->
     <aside class="left-sidebar">
       <div class="sidebar-menu">
+        <button class="sidebar-item" id="sidebar-hide-menu-btn" style="border-bottom: 1px solid var(--border-color); border-radius:0; margin-bottom: 0.5rem; padding-bottom: 0.75rem;">
+          <span class="sidebar-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </span>
+          Hide menu
+        </button>
         <span class="sidebar-title">Menu</span>
         <button class="sidebar-item active" id="sidebar-dashboard-btn">
           <span class="sidebar-item-icon">
