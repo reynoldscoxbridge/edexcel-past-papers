@@ -414,24 +414,6 @@ function setupEventListeners() {
     alert("Specification document downloading for syllabus " + currentSubjectCode + "...");
   });
 
-  // Top navigation Resources dropdown bindings
-  document.querySelectorAll('.dropdown-submenu-content a[data-subject]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      const code = a.getAttribute('data-subject');
-      navigateTo('papers', code);
-    });
-  });
-
-  document.getElementById('dropdown-notes-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    alert("Learning Hub revision resources are coming soon!");
-  });
-
-  document.getElementById('dropdown-about-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    alert("10A* Prep Space - Built to guide you to 10 A*s in your Edexcel IGCSE exams!");
-  });
 }
 
 // Fetch database papers
