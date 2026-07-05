@@ -39,6 +39,7 @@ let searchQuery = '';
 // DOM Elements
 const globalSearchInput = document.getElementById('global-search-input');
 const clearSearchBtn = document.getElementById('clear-search-btn');
+const searchResultsDropdown = document.getElementById('search-results-dropdown');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const themeIcon = document.getElementById('theme-icon');
 
@@ -48,6 +49,7 @@ const navDashboardLink = document.getElementById('nav-dashboard-link');
 const sidebarDashboardBtn = document.getElementById('sidebar-dashboard-btn');
 const sidebarResourcesBtn = document.getElementById('sidebar-resources-btn');
 const sidebarPapersBtn = document.getElementById('sidebar-papers-btn');
+const sidebarProfileBtn = document.getElementById('sidebar-profile-btn');
 const courseMenuTitle = document.getElementById('course-menu-title');
 
 // View sections
@@ -65,6 +67,12 @@ const addCoursePanelBtn = document.getElementById('add-course-panel-btn');
 const addCourseModal = document.getElementById('add-course-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 const modalSubjectsList = document.getElementById('modal-subjects-list');
+
+const profileModal = document.getElementById('profile-modal');
+const profileModalCloseBtn = document.getElementById('profile-modal-close-btn');
+const profileUsernameInput = document.getElementById('profile-username-input');
+const profileStatsText = document.getElementById('profile-stats-text');
+const saveProfileBtn = document.getElementById('save-profile-btn');
 
 // Init application on load
 document.addEventListener('DOMContentLoaded', () => {
@@ -132,34 +140,34 @@ function setupEventListeners() {
     if (currentSubjectCode) navigateTo('papers', currentSubjectCode);
   });
 
-  // Global search bar
+  // Global search autocomplete dropdown
   globalSearchInput.addEventListener('input', (e) => {
-    searchQuery = e.target.value.trim().toLowerCase();
-    clearSearchBtn.style.display = searchQuery.length > 0 ? 'flex' : 'none';
-    
-    // If the user searches globally, force them to search papers view
-    if (searchQuery.length > 0) {
-      if (currentPage !== 'papers') {
-        // If searching without subject, default to first active course or open papers
-        const defaultSubject = currentSubjectCode || activeCourses[0] || 'all';
-        navigateTo('papers', defaultSubject);
-      } else {
-        renderPapersList();
-      }
-    } else {
-      if (currentPage === 'papers') {
-        renderPapersList();
+    const val = e.target.value.trim();
+    clearSearchBtn.style.display = val.length > 0 ? 'flex' : 'none';
+    renderSearchDropdown(val);
+  });
+
+  // Handle enter key on search input (go to first result)
+  globalSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const firstItem = searchResultsDropdown.querySelector('.search-dropdown-item');
+      if (firstItem) {
+        firstItem.click();
       }
     }
   });
 
   clearSearchBtn.addEventListener('click', () => {
     globalSearchInput.value = '';
-    searchQuery = '';
     clearSearchBtn.style.display = 'none';
+    searchResultsDropdown.style.display = 'none';
     globalSearchInput.focus();
-    if (currentPage === 'papers') {
-      renderPapersList();
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-center-search')) {
+      searchResultsDropdown.style.display = 'none';
     }
   });
 
@@ -168,18 +176,21 @@ function setupEventListeners() {
   addCoursePanelBtn.addEventListener('click', openAddCourseModal);
   modalCloseBtn.addEventListener('click', closeAddCourseModal);
   
-  // Close modal on background click
   addCourseModal.addEventListener('click', (e) => {
     if (e.target === addCourseModal) closeAddCourseModal();
   });
 
-  // Subject landing sub-links triggers
+  // Profile Modal operations
+  sidebarProfileBtn.addEventListener('click', openProfileModal);
+  profileModalCloseBtn.addEventListener('click', closeProfileModal);
+  profileModal.addEventListener('click', (e) => {
+    if (e.target === profileModal) closeProfileModal();
+  });
+  saveProfileBtn.addEventListener('click', saveProfileName);
+
+  // Subject landing papers trigger
   document.getElementById('landing-view-papers-btn').addEventListener('click', () => {
     navigateTo('papers', currentSubjectCode);
-  });
-  
-  document.getElementById('view-notes-btn').addEventListener('click', () => {
-    alert("Revision notes for " + SUBJECT_MAP[currentSubjectCode] + " are coming soon!");
   });
 
   document.getElementById('download-spec-btn').addEventListener('click', () => {
@@ -256,10 +267,6 @@ function renderDashboard() {
           <h3>${name}</h3>
         </div>
         <div class="course-links">
-          <button class="course-link-btn" data-action="notes">
-            <span>Revision Notes</span>
-            <span>&rarr;</span>
-          </button>
           <button class="course-link-btn" data-action="papers">
             <span>Past Papers</span>
             <span>&rarr;</span>
@@ -269,10 +276,6 @@ function renderDashboard() {
     `;
 
     // Bind navigation buttons inside cards
-    card.querySelector('[data-action="notes"]').addEventListener('click', () => {
-      navigateTo('landing', code);
-    });
-    
     card.querySelector('[data-action="papers"]').addEventListener('click', () => {
       navigateTo('papers', code);
     });
@@ -330,7 +333,7 @@ function activateCourse(code) {
     
     renderDashboard();
     closeAddCourseModal();
-    navigateTo('landing', code); // Land on the newly added course page!
+    navigateTo('papers', code); // Land directly on the newly added course papers page!
   }
 }
 
@@ -353,6 +356,9 @@ function navigateTo(page, subjectCode = '') {
     sidebarPapersBtn.style.display = 'none';
     courseMenuTitle.style.display = 'none';
     
+    const username = localStorage.getItem('profile-username');
+    dashboardView.querySelector('h2').textContent = username ? `${username}'s courses` : 'My courses';
+
     renderDashboard();
   } 
   else if (page === 'landing') {
@@ -659,4 +665,87 @@ function updateYearProgress(subjectCode, yearKey, containerBlock = null) {
   
   const pct = totalVariants > 0 ? (completedCount / totalVariants) * 100 : 0;
   fillEl.style.width = `${pct}%`;
+}
+
+// Render the search autocomplete dropdown list matching subject codes and names
+function renderSearchDropdown(query) {
+  searchResultsDropdown.innerHTML = '';
+  
+  if (!query) {
+    searchResultsDropdown.style.display = 'none';
+    return;
+  }
+
+  // Filter subjects in mapped list (active or inactive)
+  const matches = Object.keys(SUBJECT_MAP).filter(code => {
+    const name = SUBJECT_MAP[code].toLowerCase();
+    const searchVal = query.toLowerCase();
+    return code.toLowerCase().includes(searchVal) || name.includes(searchVal);
+  });
+
+  if (matches.length === 0) {
+    searchResultsDropdown.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); padding:0.75rem 1rem; text-align:center;">No matching subjects found</div>';
+    searchResultsDropdown.style.display = 'block';
+    return;
+  }
+
+  matches.forEach(code => {
+    const name = SUBJECT_MAP[code];
+    const item = document.createElement('div');
+    item.className = 'search-dropdown-item';
+    item.innerHTML = `
+      <span class="name">${name}</span>
+      <span class="code">${code}</span>
+    `;
+
+    item.addEventListener('click', () => {
+      globalSearchInput.value = '';
+      clearSearchBtn.style.display = 'none';
+      searchResultsDropdown.style.display = 'none';
+      
+      // Navigate straight to papers list page for this course
+      navigateTo('papers', code);
+    });
+
+    searchResultsDropdown.appendChild(item);
+  });
+
+  searchResultsDropdown.style.display = 'block';
+}
+
+// Open profile statistics and username setter modal dialog
+function openProfileModal() {
+  profileUsernameInput.value = localStorage.getItem('profile-username') || '';
+  
+  // Calculate total papers tracked/completed in localstorage
+  let completedCount = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('score_')) {
+      completedCount++;
+    }
+  }
+
+  profileStatsText.textContent = `Total papers completed & tracked: ${completedCount}`;
+  profileModal.classList.add('open');
+}
+
+function closeProfileModal() {
+  profileModal.classList.remove('open');
+}
+
+function saveProfileName() {
+  const name = profileUsernameInput.value.trim();
+  if (name) {
+    localStorage.setItem('profile-username', name);
+  } else {
+    localStorage.removeItem('profile-username');
+  }
+  
+  // Update dashboard greetings if active
+  if (currentPage === 'dashboard') {
+    dashboardView.querySelector('h2').textContent = name ? `${name}'s courses` : 'My courses';
+  }
+
+  closeProfileModal();
 }
