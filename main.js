@@ -373,6 +373,25 @@ function setupEventListeners() {
   document.getElementById('download-spec-btn').addEventListener('click', () => {
     alert("Specification document downloading for syllabus " + currentSubjectCode + "...");
   });
+
+  // Top navigation Resources dropdown bindings
+  document.querySelectorAll('.dropdown-submenu-content a[data-subject]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const code = a.getAttribute('data-subject');
+      navigateTo('papers', code);
+    });
+  });
+
+  document.getElementById('dropdown-notes-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert("Learning Hub revision resources are coming soon!");
+  });
+
+  document.getElementById('dropdown-about-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert("10A* Prep Space - Built to guide you to 10 A*s in your Edexcel IGCSE exams!");
+  });
 }
 
 // Fetch database papers
@@ -397,18 +416,15 @@ async function fetchPapersCatalog() {
   }
 }
 
-// Load course activations from local storage and scan directory files
+// Load course activations from local storage
 function loadActivatedCourses() {
-  const autoActive = [...new Set(papersData.map(p => p.subjectCode).filter(Boolean))];
-  
   let savedActive = [];
   try {
     const parsed = JSON.parse(localStorage.getItem('activated_subjects'));
     if (Array.isArray(parsed)) savedActive = parsed;
   } catch (e) {}
 
-  // Merge auto-active courses with manually activated courses
-  activeCourses = [...new Set([...autoActive, ...savedActive])];
+  activeCourses = savedActive;
 }
 
 // Render Dashboard View

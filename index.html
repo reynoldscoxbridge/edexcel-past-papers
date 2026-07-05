@@ -25,18 +25,42 @@
   <nav class="top-nav">
     <div class="nav-left">
       <a href="#" class="logo-container" id="logo-home-link">
-        <span class="logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-          </svg>
-        </span>
-        <div class="logo-text">
-          IGCSE Prep Space
-          <span>SaveMyExams Edition</span>
+        <div class="logo-text" style="font-size:1.35rem; font-weight:850; color:var(--primary-purple); letter-spacing:-0.5px;">
+          Target 10A*
         </div>
       </a>
       <div class="nav-links">
         <a href="#" class="nav-link" id="nav-dashboard-link">Dashboard</a>
+        <div class="nav-dropdown-wrapper">
+          <button class="nav-dropdown-trigger" id="nav-resources-btn">
+            Resources
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:0.2rem;">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="nav-dropdown-content" id="nav-resources-dropdown">
+            <div class="dropdown-submenu-trigger">
+              <span>IGCSE Subjects</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+              <div class="dropdown-submenu-content">
+                <a href="#" data-subject="4AC1">Accounting (4AC1)</a>
+                <a href="#" data-subject="4CH1">Chemistry (4CH1)</a>
+                <a href="#" data-subject="4EC1">Economics (4EC1)</a>
+                <a href="#" data-subject="4EB1">English Language B (4EB1)</a>
+                <a href="#" data-subject="4XES2">ESL (4XES2)</a>
+                <a href="#" data-subject="4ET1">English Literature (4ET1)</a>
+                <a href="#" data-subject="4PM1">Further Pure Math (4PM1)</a>
+                <a href="#" data-subject="4MA1">Mathematics A (4MA1)</a>
+                <a href="#" data-subject="4MB1">Mathematics B (4MB1)</a>
+                <a href="#" data-subject="4PH1">Physics (4PH1)</a>
+              </div>
+            </div>
+            <a href="#" id="dropdown-notes-link">Learning Hub</a>
+            <a href="#" id="dropdown-about-link">About Us</a>
+          </div>
+        </div>
       </div>
     </div>
     
